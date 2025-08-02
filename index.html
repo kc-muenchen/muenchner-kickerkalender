@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weekly Calendar</title>
+
+  <!-- ✅ This is the <style> section — put it inside <head> -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background-color: #ccc;
+    }
+    .day {
+      background-color: #f9f9f9;
+      padding: 10px;
+      min-height: 120px;
+      border: 1px solid #ddd;
+    }
+    .day h3 {
+      margin: 0 0 10px;
+      font-size: 1em;
+      color: #333;
+    }
+    .entry {
+      background: #e0f7fa;
+      margin: 6px 0;
+      padding: 6px 8px;
+      border-left: 4px solid #00796b;
+      font-size: 0.9em;
+    }
+    .entry a {
+      color: #00796b;
+      text-decoration: none;
+    }
+    .entry a:hover {
+      text-decoration: underline;
+    }
+    .entry small {
+      color: #555;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Münchner Kickerkalender</h1>
+
+<p style="font-size: 1.1em; color: #444; margin-bottom: 20px;">
+Regelmäßig werden wir gefragt, wo man in München und Umgebung an welchem Tag am besten kickern gehen kann. Daher haben wir hier eine Übersicht für euch zusammengestellt.
+<br>
+Ihr habt Ergänzungen? Dann meldet euch gerne <a href="mailto:kickerkalender@kc-muenchen.de">hier</a>
+<br>
+</p>
+
+<!-- 🧱 The calendar grid will appear here -->
+<div class="calendar" id="calendar"></div>
+
+<!-- ✅ This is the <script> section — put it at the end of <body> -->
+<script>
+  const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+
+  const entries = {
+    Montag: [
+      { title: 'Monster-DYP', time: '8:15 PM', location: '<a href="https://maps.app.goo.gl/sUK2SaNeQZq8CRUj9">Happy Billard, Martinsried</a>', link: 'https://www.tischfussballvereinigung.de/', description: 'Wöchentliches Monster-DYP der Tischfußballvereinigung München e.V.' }
+    ],
+    Dienstag: [
+      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/tHnYFwcH5km1cfgNA">Südstadt, München</a>', link: 'https://www.suedstadt-schlachthof.de/', description: 'Lockeres Kickern in der Südstadt. Normalerweise ist am Dienstag immer etwas los.' }
+    ],
+    Mittwoch: [
+      { title: 'Monster-DYP', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/dj5vfbZqDJvzbKNg8">Die Katze, KC München</a>', link: 'https://kc-muenchen.de/', description: 'Wöchentliches Monster-DYP des KickerClub München e.V.' }
+    ],
+    Donnerstag: [
+      { title: 'Monster-DYP (zweiwöchentlich)', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Zweiwöchentliches Monster-DYP in lockerer Kneipenathmosphäre. Findet immer alternierend zum Einzelturnier beim KC München statt.' },
+      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Wenn kein Turnier stattfindet, finden sich hier auch häufig ein paar Spieler:innen' }
+    ],
+    Freitag: [
+      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann in der Südstadt nebenan.' },
+      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/tHnYFwcH5km1cfgNA">Südstadt, München</a>', link: 'https://www.suedstadt-schlachthof.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann im Flex nebenan.' },
+      { title: 'Turnier (unregelmäßig)', time: '8:00 PM', location: 'TSG Maisach', link: 'https://www.tsgmaisach.de/', description: 'In unregelmäßigen Abständen finden hier Turniere statt' }
+    ],
+    Samstag: [
+      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann in der Südstadt nebenan.' },
+      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/tHnYFwcH5km1cfgNA">Südstadt, München</a>', link: 'https://www.suedstadt-schlachthof.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann im Flex nebenan.' },
+      { title: 'Einzelturnier (zweiwöchentlich)', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/dj5vfbZqDJvzbKNg8">Die Katze, KC München</a>', link: 'https://kc-muenchen.de/', description: 'Zweiwöchentliches Einzelturnier des KickerClub München e.V.. Findet immer alternierend zum Monster-DYP im Flex statt.' }
+    ],
+  };
+
+  const calendar = document.getElementById('calendar');
+
+  days.forEach(day => {
+    const dayDiv = document.createElement('div');
+    dayDiv.className = 'day';
+    dayDiv.innerHTML = `<h3>${day}</h3>`;
+
+    (entries[day] || []).forEach(item => {
+      const entry = document.createElement('div');
+      entry.className = 'entry';
+
+      let html = `<strong>${item.title}</strong>`;
+      if (item.time) html += `<br><em>${item.time}</em>`;
+      if (item.location) html += `<br>📍 ${item.location}`;
+      if (item.link) html += `<br><a href="${item.link}" target="_blank">More Info</a>`;
+      if (item.description) html += `<br><small>${item.description}</small>`;
+
+      entry.innerHTML = html;
+      dayDiv.appendChild(entry);
+    });
+
+    calendar.appendChild(dayDiv);
+  });
+</script>
+
+<footer style="margin-top: 40px; font-size: 0.9em; color: #666; text-align: center;">
+  © 2025 · Made with ⚽ by <a href="https://kc-muenchen.de" target="_blank" style="color: #00796b; text-decoration: none;">KickerClub München e.V.</a>
+</footer>
+
+</body>
+</html>
+
