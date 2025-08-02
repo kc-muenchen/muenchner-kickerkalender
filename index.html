@@ -4,50 +4,111 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Münchner Kickerkalender</title>
-
-  <!-- ✅ This is the <style> section — put it inside <head> -->
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
+      margin: 0;
     }
-    .calendar {
+
+    h1, p {
+      text-align: center;
+    }
+
+    #calendar {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 1px;
-      background-color: #ccc;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      max-width: 1400px;
+      margin: 20px auto;
+      overflow-x: auto;
     }
+
     .day {
       background-color: #f9f9f9;
-      padding: 10px;
-      min-height: 120px;
+      padding: 16px;
       border: 1px solid #ddd;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
+
     .day h3 {
       margin: 0 0 10px;
-      font-size: 1em;
+      font-size: 1.2em;
+      text-align: center;
       color: #333;
     }
+
     .entry {
       background: #e0f7fa;
-      margin: 6px 0;
+      margin: 8px 0;
       padding: 6px 8px;
       border-left: 4px solid #00796b;
-      font-size: 0.9em;
+      font-size: 0.95em;
     }
+
     .entry a {
       color: #00796b;
       text-decoration: none;
     }
+
     .entry a:hover {
       text-decoration: underline;
     }
+
+    .entry b {
+      color: #88796b;
+      text-decoration: none;
+    }
+
     .entry small {
       color: #555;
     }
+
+    .entry.tournament {
+      background: #CAE5FF;
+      border-left: 4px solid #6F8AB7;
+    }
+
+    .entry.leisure {
+      background: #ACEDFF;
+      border-left: 4px solid #89BBFE;
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      max-width: 400px;
+      margin: 10px auto;
+    }
+
+    .navigation button {
+      background-color: #6F8AB7;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    .navigation button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    /* ✅ On wider screens, show all days side by side */
+    @media (min-width: 700px) {
+      #calendar {
+        grid-template-columns: repeat(7, 1fr);
+      }
+
+      .navigation {
+        display: none; /* Hide buttons on desktop */
+      }
+    }
   </style>
 </head>
-
 <body>
 
 <h1>Münchner Kickerkalender</h1>
@@ -59,66 +120,127 @@ Ihr habt Ergänzungen? Dann meldet euch gerne <a href="mailto:kickerkalender@kc-
 <br>
 </p>
 
-<!-- 🧱 The calendar grid will appear here -->
-<div class="calendar" id="calendar"></div>
+<div id="calendar"></div>
 
-<!-- ✅ This is the <script> section — put it at the end of <body> -->
+<div class="navigation">
+  <button id="prevBtn">← Vorheriger Tag</button>
+  <button id="nextBtn">Nächster Tag →</button>
+</div>
+
 <script>
   const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-
   const entries = {
     Montag: [
-      { title: 'Monster-DYP', time: '8:15 PM', location: '<a href="https://maps.app.goo.gl/sUK2SaNeQZq8CRUj9">Happy Billard, Martinsried</a>', link: 'https://www.tischfussballvereinigung.de/', description: 'Wöchentliches Monster-DYP der Tischfußballvereinigung München e.V.' }
+      { title: 'Monster-DYP', time: '8:15 PM', location: '<a href="https://maps.app.goo.gl/sUK2SaNeQZq8CRUj9">Happy Billard, Martinsried</a>', link: 'https://www.tischfussballvereinigung.de/', description: 'Wöchentliches Monster-DYP der Tischfußballvereinigung München e.V.', type: 'tournament' }
     ],
     Dienstag: [
-      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/tHnYFwcH5km1cfgNA">Südstadt, München</a>', link: 'https://www.suedstadt-schlachthof.de/', description: 'Lockeres Kickern in der Südstadt. Normalerweise ist am Dienstag immer etwas los.' }
+      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/tHnYFwcH5km1cfgNA">Südstadt, München</a>', link: 'https://www.suedstadt-schlachthof.de/', description: 'Lockeres Kickern in der Südstadt. Normalerweise ist am Dienstag immer etwas los.', type: 'leisure' }
     ],
     Mittwoch: [
-      { title: 'Monster-DYP', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/dj5vfbZqDJvzbKNg8">Die Katze, KC München</a>', link: 'https://kc-muenchen.de/', description: 'Wöchentliches Monster-DYP des KickerClub München e.V.' }
+      { title: 'Monster-DYP', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/dj5vfbZqDJvzbKNg8">Die Katze, KC München</a>', link: 'https://kc-muenchen.de/', description: 'Wöchentliches Monster-DYP des KickerClub München e.V.', type: 'tournament'  }
     ],
     Donnerstag: [
-      { title: 'Monster-DYP (zweiwöchentlich)', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Zweiwöchentliches Monster-DYP in lockerer Kneipenathmosphäre. Findet immer alternierend zum Einzelturnier beim KC München statt.' },
-      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Wenn kein Turnier stattfindet, finden sich hier auch häufig ein paar Spieler:innen' }
+      { title: 'Monster-DYP (zweiwöchentlich)', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Zweiwöchentliches Monster-DYP in lockerer Kneipenathmosphäre. Findet immer alternierend zum Einzelturnier beim KC München statt.', type: 'tournament'  },
+      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Wenn kein Turnier stattfindet, finden sich hier auch häufig ein paar Spieler:innen', type: 'leisure' }
     ],
     Freitag: [
-      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann in der Südstadt nebenan.' },
-      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/tHnYFwcH5km1cfgNA">Südstadt, München</a>', link: 'https://www.suedstadt-schlachthof.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann im Flex nebenan.' },
-      { title: 'Turnier (unregelmäßig)', time: '8:00 PM', location: 'TSG Maisach', link: 'https://www.tsgmaisach.de/', description: 'In unregelmäßigen Abständen finden hier Turniere statt' }
+      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann in der Südstadt nebenan.', type: 'leisure'  },
+      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/tHnYFwcH5km1cfgNA">Südstadt, München</a>', link: 'https://www.suedstadt-schlachthof.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann im Flex nebenan.', type: 'leisure'  },
+      { title: 'Turnier (unregelmäßig)', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/H39hEXPVwLge3HRf8">TSG Maisach</a>', link: 'https://www.tsgmaisach.de/', description: 'In unregelmäßigen Abständen finden hier Turniere statt', type: 'tournament'  }
     ],
     Samstag: [
-      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann in der Südstadt nebenan.' },
-      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/tHnYFwcH5km1cfgNA">Südstadt, München</a>', link: 'https://www.suedstadt-schlachthof.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann im Flex nebenan.' },
-      { title: 'Einzelturnier (zweiwöchentlich)', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/dj5vfbZqDJvzbKNg8">Die Katze, KC München</a>', link: 'https://kc-muenchen.de/', description: 'Zweiwöchentliches Einzelturnier des KickerClub München e.V.. Findet immer alternierend zum Monster-DYP im Flex statt.' }
+      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann in der Südstadt nebenan.', type: 'leisure'  },
+      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/tHnYFwcH5km1cfgNA">Südstadt, München</a>', link: 'https://www.suedstadt-schlachthof.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann im Flex nebenan.', type: 'leisure'  },
+      { title: 'Einzelturnier (zweiwöchentlich)', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/dj5vfbZqDJvzbKNg8">Die Katze, KC München</a>', link: 'https://kc-muenchen.de/', description: 'Zweiwöchentliches Einzelturnier des KickerClub München e.V.. Findet immer alternierend zum Monster-DYP im Flex statt.', type: 'tournament'  }
     ],
   };
 
+  let currentDayIndex = 0;
+
   const calendar = document.getElementById('calendar');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
 
-  days.forEach(day => {
-    const dayDiv = document.createElement('div');
-    dayDiv.className = 'day';
-    dayDiv.innerHTML = `<h3>${day}</h3>`;
+  function renderCalendar() {
+    calendar.innerHTML = '';
 
-    (entries[day] || []).forEach(item => {
+    // Show all days on desktop
+    if (window.innerWidth >= 700) {
+      days.forEach((day, index) => {
+        calendar.appendChild(createDayBox(day, entries[day] || []));
+      });
+    } else {
+      // Show only one day on mobile
+      calendar.appendChild(createDayBox(days[currentDayIndex], entries[days[currentDayIndex]] || []));
+    }
+
+    updateButtons();
+  }
+
+  function createDayBox(day, items) {
+    const div = document.createElement('div');
+    div.className = 'day';
+    div.innerHTML = `<h3>${day}</h3>`;
+    items.forEach(item => {
       const entry = document.createElement('div');
-      entry.className = 'entry';
+      entry.className = `entry ${item.type || ''}`;
 
-      let html = `<strong>${item.title}</strong>`;
-      if (item.time) html += `<br><em>${item.time}</em>`;
-      if (item.location) html += `<br>📍 ${item.location}`;
-      if (item.link) html += `<br><a href="${item.link}" target="_blank">More Info</a>`;
-      if (item.description) html += `<br><small>${item.description}</small>`;
+      let html = `<strong>${item.title}</strong><br>`;
+      if (item.time) html += `<em>${item.time}</em><br>`;
+      if (item.location) html += `📍 ${item.location}<br>`;
+      if (item.link) html += `<a href="${item.link}" target="_blank">More Info</a><br>`;
+      if (item.description) html += `<small>${item.description}</small>`;
 
       entry.innerHTML = html;
-      dayDiv.appendChild(entry);
+      div.appendChild(entry);
     });
+    return div;
+  }
 
-    calendar.appendChild(dayDiv);
+  function updateButtons() {
+    prevBtn.disabled = currentDayIndex === 0;
+    nextBtn.disabled = currentDayIndex === days.length - 1;
+  }
+
+  prevBtn.addEventListener('click', () => {
+    if (currentDayIndex > 0) {
+      currentDayIndex--;
+      renderCalendar();
+    }
   });
+
+  nextBtn.addEventListener('click', () => {
+    if (currentDayIndex < days.length - 1) {
+      currentDayIndex++;
+      renderCalendar();
+    }
+  });
+
+  window.addEventListener('resize', renderCalendar);
+
+  // Optional: Swipe support
+  let touchStartX = 0;
+  calendar.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  });
+  calendar.addEventListener('touchend', e => {
+    let touchEndX = e.changedTouches[0].clientX;
+    let diff = touchEndX - touchStartX;
+    if (diff > 50 && currentDayIndex > 0 && window.innerWidth < 700) {
+      currentDayIndex--;
+      renderCalendar();
+    } else if (diff < -50 && currentDayIndex < days.length - 1 && window.innerWidth < 700) {
+      currentDayIndex++;
+      renderCalendar();
+    }
+  });
+
+  renderCalendar();
 </script>
 
 <footer style="margin-top: 40px; font-size: 0.9em; color: #666; text-align: center;">
-  © 2025 · Made with ⚽ by <a href="https://kc-muenchen.de" target="_blank" style="color: #00796b; text-decoration: none;">KickerClub München e.V.</a>
+  <img src="https://kc-muenchen.de/wp-content/uploads/2024/05/Logo_cat_only.png" alt="Logo KC München" width="150"><br><br>
+  © 2025 · Made with ⚽ by <a href="https://kc-muenchen.de" target="_blank" style="color: #00796b; text-decoration: none;">KickerClub München e.V. - Münchens Kicker-Herz schlägt hier!</a>
 </footer>
 
 </body>
