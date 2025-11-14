@@ -1,159 +1,270 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Münchner Kickerwoche</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
+    :root {
+      --primary: #4F46E5;
+      --primary-light: #818CF8;
+      --secondary: #10B981;
+      --accent: #F59E0B;
+      --dark: #1F2937;
+      --light: #F9FAFB;
+      --gray: #6B7280;
+      --gray-light: #E5E7EB;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: var(--dark);
+      background-color: #F3F4F6;
+      padding: 0;
       margin: 0;
     }
 
-    h1, p {
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      padding: 3rem 1.5rem;
       text-align: center;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -0.025em;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto 1.5rem;
+      opacity: 0.95;
+      line-height: 1.6;
+    }
+
+    .contact-link {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .contact-link:hover {
+      border-bottom-color: white;
     }
 
     #calendar {
-      max-width: 1400px;
-      margin: 20px auto;
-      overflow: hidden;
-      position: relative;
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      margin: 2rem 0;
+      padding-bottom: 1rem;
+      gap: 1.5rem;
+      scroll-padding: 0 1.5rem;
     }
 
-    .calendar-container {
-      display: flex;
-      transition: transform 0.3s ease;
-      width: 100%;
-      height: 100%;
-    }
-
-    .calendar-days {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      flex-shrink: 0;
+    @media (min-width: 768px) {
+      #calendar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        overflow-x: visible;
+        scroll-snap-type: none;
+      }
     }
 
     .day {
-      flex: 0 0 100%;
-      box-sizing: border-box;
-      padding: 16px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      flex: 0 0 calc(100% - 3rem);
+      scroll-snap-align: start;
+      margin: 0 0.5rem;
     }
 
-    @media (max-width: 699px) {
-      .calendar-days {
+    @media (min-width: 768px) {
+      .day {
+        flex: none;
+        margin: 0;
+      }
+    }
+
+    .day:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .day-header {
+      background: var(--primary);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+
+    .entries {
+      padding: 1rem;
+    }
+
+    .entry {
+      background: var(--light);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid var(--primary);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .entry:hover {
+      transform: translateX(4px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .entry.tournament {
+      border-left-color: var(--secondary);
+      background: linear-gradient(to right, rgba(16, 185, 129, 0.05), white);
+    }
+
+    .entry.leisure {
+      border-left-color: var(--accent);
+      background: linear-gradient(to right, rgba(245, 158, 11, 0.05), white);
+    }
+
+    .entry h4 {
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .entry h4 i {
+      color: var(--gray);
+    }
+
+    .entry p {
+      color: var(--gray);
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      text-align: left;
+    }
+
+    .entry a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .entry a:hover {
+      color: var(--primary-light);
+      text-decoration: underline;
+    }
+
+    .entry-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--gray);
+    }
+
+    .entry-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .whatsapp-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: #25D366;
+      color: white !important;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      text-decoration: none !important;
+    }
+
+    .whatsapp-link:hover {
+      background: #128C7E;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      color: var(--gray);
+      font-size: 0.9rem;
+      margin-top: 3rem;
+      border-top: 1px solid var(--gray-light);
+    }
+
+    @media (max-width: 768px) {
+      #calendar {
         grid-template-columns: 1fr;
       }
 
       .day {
-        min-width: 100%;
-      }
-    }
-
-    .day {
-      background-color: #f9f9f9;
-      padding: 16px;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-
-    .day h3 {
-      margin: 0 0 10px;
-      font-size: 1.2em;
-      text-align: center;
-      color: #333;
-    }
-
-    .entry {
-      background: #e0f7fa;
-      margin: 8px 0;
-      padding: 6px 8px;
-      border-left: 4px solid #00796b;
-      font-size: 0.95em;
-    }
-
-    .entry a {
-      color: #00796b;
-      text-decoration: none;
-    }
-
-    .entry a:hover {
-      text-decoration: underline;
-    }
-
-    .entry b {
-      color: #88796b;
-      text-decoration: none;
-    }
-
-    .entry small {
-      color: #555;
-    }
-
-    .entry.tournament {
-      background: #CAE5FF;
-      border-left: 4px solid #6F8AB7;
-    }
-
-    .entry.leisure {
-      background: #ACEDFF;
-      border-left: 4px solid #89BBFE;
-    }
-
-    .navigation {
-      display: flex;
-      justify-content: space-between;
-      max-width: 400px;
-      margin: 10px auto;
-    }
-
-    .navigation button {
-      background-color: #6F8AB7;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 1em;
-      cursor: pointer;
-    }
-
-    .navigation button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-
-    /* ✅ On wider screens, show all days side by side */
-    @media (min-width: 700px) {
-      #calendar {
-        grid-template-columns: repeat(7, 1fr);
+        margin-bottom: 1.5rem;
       }
 
-      .navigation {
-        display: none; /* Hide buttons on desktop */
+      h1 {
+        font-size: 2rem;
+      }
+
+      .subtitle {
+        font-size: 1rem;
       }
     }
   </style>
+  </style>
 </head>
 <body>
+  <header>
+    <div class="container">
+      <h1>Münchner Kickerwoche</h1>
+      <p class="subtitle">
+        -Regelmäßig werden wir gefragt, wo man in München und Umgebung an welchem Tag am besten kickern gehen kann. Daher haben wir hier eine Übersicht für euch zusammengestellt.
+      </p>
+      <p class="subtitle">
+        Ihr habt Ergänzungen? Dann meldet euch gerne <a href="mailto:kickerkalender@kc-muenchen.de">hier</a>
+      </p>
+    </div>
+  </header>
 
-<h1>Münchner Kickerwoche</h1>
+  <div class="container">
 
-<p style="font-size: 1.1em; color: #444; margin-bottom: 20px;">
-Regelmäßig werden wir gefragt, wo man in München und Umgebung an welchem Tag am besten kickern gehen kann. Daher haben wir hier eine Übersicht für euch zusammengestellt.
-<br>
-Ihr habt Ergänzungen? Dann meldet euch gerne <a href="mailto:kickerkalender@kc-muenchen.de">hier</a>
-<br>
-</p>
-
-<div id="calendar"></div>
-
-<div class="navigation">
-  <button id="prevBtn">← Vorheriger Tag</button>
-  <button id="nextBtn">Nächster Tag →</button>
-</div>
+    <div id="calendar"></div>
+  </div>
 
 <script>
   const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
@@ -192,73 +303,85 @@ Ihr habt Ergänzungen? Dann meldet euch gerne <a href="mailto:kickerkalender@kc-
 
   function renderCalendar() {
     calendar.innerHTML = '';
-    const container = document.createElement('div');
-    container.className = 'calendar-container';
 
-    // Always render all days
+    // Always render all days in a grid
     days.forEach((day, index) => {
-      container.appendChild(createDayBox(day, entries[day] || []));
+      calendar.appendChild(createDayBox(day, entries[day] || []));
     });
-
-    calendar.appendChild(container);
 
     // Wait for the DOM to update
     setTimeout(() => {
-      updateCalendarPosition();
       updateButtons();
     }, 0);
   }
 
   function updateCalendarPosition() {
-    const container = document.querySelector('.calendar-container');
-    if (!container) return;
-
-    if (window.innerWidth >= 700) {
-      // On desktop, show all days in a grid
-      container.style.transform = 'translateX(0)';
-      container.style.width = '100%';
-      document.querySelectorAll('.day').forEach(day => {
-        day.style.flex = '1';
-        day.style.minWidth = '0';
-      });
-    } else {
+    if (window.innerWidth < 700) {
       // On mobile, show one day at a time with infinite loop
-      const dayWidth = container.parentElement.offsetWidth;
+      const dayWidth = calendar.offsetWidth;
       const totalDays = days.length;
 
       // Handle infinite loop by duplicating days at the beginning and end
       if (currentDayIndex < 0) currentDayIndex = totalDays - 1;
       if (currentDayIndex >= totalDays) currentDayIndex = 0;
 
-      container.style.width = `${dayWidth * totalDays}px`;
-      container.style.transform = `translateX(-${currentDayIndex * dayWidth}px)`;
-
-      document.querySelectorAll('.day').forEach(day => {
-        day.style.flex = `0 0 ${dayWidth}px`;
-        day.style.minWidth = `${dayWidth}px`;
+      calendar.scrollTo({
+        left: dayWidth * currentDayIndex,
+        behavior: 'smooth'
       });
     }
   }
 
   function createDayBox(day, items) {
-    const div = document.createElement('div');
-    div.className = 'day';
-    div.innerHTML = `<h3>${day}</h3>`;
-    items.forEach(item => {
-      const entry = document.createElement('div');
-      entry.className = `entry ${item.type || ''}`;
+    const dayBox = document.createElement('div');
+    dayBox.className = 'day';
 
-      let html = `<strong>${item.title}</strong><br>`;
-      if (item.time) html += `<em>${item.time}</em><br>`;
-      if (item.location) html += `📍 ${item.location}<br>`;
-      if (item.link) html += `<a href="${item.link}" target="_blank">🔗 Website</a><br>`;
-      if (item.whatsapp) html += `<a href="${item.whatsapp}" target="_blank">🗨️ WhatsApp-Gruppe</a><br>`
-      if (item.description) html += `<small>${item.description}</small><br>`;
+    const dayHeader = document.createElement('div');
+    dayHeader.className = 'day-header';
+    dayHeader.textContent = day;
 
-      entry.innerHTML = html;
-      div.appendChild(entry);
-    });
-    return div;
+    const entriesContainer = document.createElement('div');
+    entriesContainer.className = 'entries';
+
+    if (!items || items.length === 0) {
+      const noEntry = document.createElement('div');
+      noEntry.className = 'entry';
+      noEntry.innerHTML = '<p>Keine Einträge für heute. Schau doch später noch einmal vorbei!</p>';
+      entriesContainer.appendChild(noEntry);
+    } else {
+      items.forEach(item => {
+        if (!item) return;
+        const entry = document.createElement('div');
+        entry.className = `entry ${item.type || ''}`;
+
+        let whatsappLink = '';
+        if (item.whatsapp) {
+          whatsappLink = `
+            <a href="${item.whatsapp}" class="whatsapp-link" target="_blank" rel="noopener noreferrer">
+              <i class="fab fa-whatsapp"></i> WhatsApp Gruppe
+            </a>`;
+        }
+
+        entry.innerHTML = `
+          <h4>
+            <i class="${item.type === 'tournament' ? 'fas fa-trophy' : 'fas fa-futbol'}"></i>
+            ${item.title}
+          </h4>
+          <p>${item.description}</p>
+          <div class="entry-meta">
+            <span title="Uhrzeit"><i class="far fa-clock"></i> ${item.time} Uhr</span>
+            <span title="Ort"><i class="fas fa-map-marker-alt"></i> ${item.location}</span>
+          </div>
+          ${whatsappLink}
+        `;
+
+        entriesContainer.appendChild(entry);
+      });
+    }
+
+    dayBox.appendChild(dayHeader);
+    dayBox.appendChild(entriesContainer);
+    return dayBox;
   }
 
   function updateButtons() {
@@ -268,104 +391,93 @@ Ihr habt Ergänzungen? Dann meldet euch gerne <a href="mailto:kickerkalender@kc-
     nextBtn.style.opacity = '1';
   }
 
-  prevBtn.addEventListener('click', () => {
-    currentDayIndex = (currentDayIndex - 1 + days.length) % days.length;
-    updateCalendarPosition();
-    updateButtons();
-  });
+  // Initialize the calendar
+  document.addEventListener('DOMContentLoaded', () => {
+    renderCalendar();
 
-  nextBtn.addEventListener('click', () => {
-    currentDayIndex = (currentDayIndex + 1) % days.length;
-    updateCalendarPosition();
-    updateButtons();
-  });
+    // Setup touch events for swiping
+    const calendarEl = document.getElementById('calendar');
+    let touchStartX = 0;
+    let touchEndX = 0;
 
+    calendarEl.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, false);
 
-  // Enhanced swipe support with infinite loop
-  let touchStartX = 0;
-  let isDragging = false;
-  let startPos = 0;
-  let currentTranslate = 0;
-  let prevTranslate = 0;
+    calendarEl.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, false);
 
-  calendar.addEventListener('mousedown', dragStart);
-  calendar.addEventListener('touchstart', dragStart);
-  calendar.addEventListener('mouseup', dragEnd);
-  calendar.addEventListener('touchend', dragEnd);
-  calendar.addEventListener('mousemove', drag);
-  calendar.addEventListener('touchmove', drag, { passive: false });
+    function handleSwipe() {
+      const swipeThreshold = 50;
+      const swipeLength = touchStartX - touchEndX;
 
-  function dragStart(e) {
-    if (window.innerWidth >= 700) return;
+      if (Math.abs(swipeLength) > swipeThreshold) {
+        if (swipeLength > 0) {
+          // Swipe left - go to next day
+          currentDayIndex = (currentDayIndex + 1) % days.length;
+        } else {
+          // Swipe right - go to previous day
+          currentDayIndex = (currentDayIndex - 1 + days.length) % days.length;
+        }
 
-    isDragging = true;
-    startPos = e.clientX || e.touches[0].clientX;
-    prevTranslate = currentTranslate;
-
-    const container = document.querySelector('.calendar-container');
-    container.style.transition = 'none';
-
-    e.preventDefault();
-  }
-
-  function drag(e) {
-    if (!isDragging || window.innerWidth >= 700) return;
-
-    const currentPosition = e.clientX || e.touches[0].clientX;
-    const diff = currentPosition - startPos;
-    const container = document.querySelector('.calendar-container');
-
-    // Allow continuous dragging in both directions
-    currentTranslate = prevTranslate + diff;
-    container.style.transition = 'none';
-    container.style.transform = `translateX(${currentTranslate}px)`;
-
-    e.preventDefault();
-  }
-
-  function dragEnd() {
-    if (window.innerWidth >= 700) return;
-
-    isDragging = false;
-    const container = document.querySelector('.calendar-container');
-    if (!container) return;
-
-    container.style.transition = 'transform 0.3s ease';
-
-    const dayWidth = container.parentElement.offsetWidth;
-    const threshold = dayWidth * 0.15; // 15% of day width as threshold
-
-    // Calculate the target day based on drag distance
-    const dragDistance = Math.abs(currentTranslate - prevTranslate);
-    const shouldSwipe = dragDistance > threshold;
-
-    if (shouldSwipe) {
-      if (currentTranslate < prevTranslate) {
-        // Swipe left - next day with infinite loop
-        currentDayIndex = (currentDayIndex + 1) % days.length;
-      } else {
-        // Swipe right - previous day with infinite loop
-        currentDayIndex = (currentDayIndex - 1 + days.length) % days.length;
+        // Scroll to the selected day
+        const dayElements = document.querySelectorAll('.day');
+        if (dayElements[currentDayIndex]) {
+          dayElements[currentDayIndex].scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'center'
+          });
+        }
       }
     }
 
-    // Snap to the target day
-    updateCalendarPosition();
-  }
+    // Update current day based on scroll position
+    calendarEl.addEventListener('scroll', () => {
+      const dayElements = document.querySelectorAll('.day');
+      const container = calendarEl.getBoundingClientRect();
 
-  // Handle window resize
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      updateCalendarPosition();
-      updateButtons();
-    }, 250);
+      dayElements.forEach((day, index) => {
+        const dayRect = day.getBoundingClientRect();
+        // Check if day is in the center of the viewport
+        if (dayRect.left >= container.left &&
+            dayRect.right <= container.right) {
+          currentDayIndex = index;
+        }
+      });
+    });
   });
 
-  renderCalendar();
-</script>
+  // Add smooth scroll behavior for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
 
+  // Add animation on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  function init() {
+    document.body.style.opacity = '0';
+    setTimeout(() => {
+      document.body.style.transition = 'opacity 0.5s ease-in';
+      document.body.style.opacity = '1';
+    }, 100);
+  }
+</script>
 <footer style="margin-top: 40px; font-size: 0.9em; color: #666; text-align: center;">
   <img src="https://kc-muenchen.de/wp-content/uploads/2024/05/Logo_cat_only.png" alt="Logo KC München" width="150"><br><br>
   © 2025 · Made with ⚽ by <a href="https://kc-muenchen.de" target="_blank" style="color: #00796b; text-decoration: none;">KickerClub München e.V. - Münchens Kicker-Herz schlägt hier!</a>
