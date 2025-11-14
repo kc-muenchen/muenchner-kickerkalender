@@ -15,5 +15,3 @@ kickerkalender CNAME kc-muenchen.github.io 3600
 ```
 
 Danach muss diese custom domain in den repository-Settings eingetragen werden. Das Zertifikat für https://kickerkalender.kc-muenchen.de wird dann automatisch bezogen.
-
-

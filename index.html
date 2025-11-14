@@ -16,12 +16,40 @@
     }
 
     #calendar {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1rem;
       max-width: 1400px;
       margin: 20px auto;
-      overflow-x: auto;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .calendar-container {
+      display: flex;
+      transition: transform 0.3s ease;
+      width: 100%;
+      height: 100%;
+    }
+
+    .calendar-days {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      flex-shrink: 0;
+    }
+
+    .day {
+      flex: 0 0 100%;
+      box-sizing: border-box;
+      padding: 16px;
+    }
+
+    @media (max-width: 699px) {
+      .calendar-days {
+        grid-template-columns: 1fr;
+      }
+
+      .day {
+        min-width: 100%;
+      }
     }
 
     .day {
@@ -164,18 +192,52 @@ Ihr habt Ergänzungen? Dann meldet euch gerne <a href="mailto:kickerkalender@kc-
 
   function renderCalendar() {
     calendar.innerHTML = '';
+    const container = document.createElement('div');
+    container.className = 'calendar-container';
 
-    // Show all days on desktop
+    // Always render all days
+    days.forEach((day, index) => {
+      container.appendChild(createDayBox(day, entries[day] || []));
+    });
+
+    calendar.appendChild(container);
+
+    // Wait for the DOM to update
+    setTimeout(() => {
+      updateCalendarPosition();
+      updateButtons();
+    }, 0);
+  }
+
+  function updateCalendarPosition() {
+    const container = document.querySelector('.calendar-container');
+    if (!container) return;
+
     if (window.innerWidth >= 700) {
-      days.forEach((day, index) => {
-        calendar.appendChild(createDayBox(day, entries[day] || []));
+      // On desktop, show all days in a grid
+      container.style.transform = 'translateX(0)';
+      container.style.width = '100%';
+      document.querySelectorAll('.day').forEach(day => {
+        day.style.flex = '1';
+        day.style.minWidth = '0';
       });
     } else {
-      // Show only one day on mobile
-      calendar.appendChild(createDayBox(days[currentDayIndex], entries[days[currentDayIndex]] || []));
-    }
+      // On mobile, show one day at a time with infinite loop
+      const dayWidth = container.parentElement.offsetWidth;
+      const totalDays = days.length;
 
-    updateButtons();
+      // Handle infinite loop by duplicating days at the beginning and end
+      if (currentDayIndex < 0) currentDayIndex = totalDays - 1;
+      if (currentDayIndex >= totalDays) currentDayIndex = 0;
+
+      container.style.width = `${dayWidth * totalDays}px`;
+      container.style.transform = `translateX(-${currentDayIndex * dayWidth}px)`;
+
+      document.querySelectorAll('.day').forEach(day => {
+        day.style.flex = `0 0 ${dayWidth}px`;
+        day.style.minWidth = `${dayWidth}px`;
+      });
+    }
   }
 
   function createDayBox(day, items) {
@@ -200,41 +262,105 @@ Ihr habt Ergänzungen? Dann meldet euch gerne <a href="mailto:kickerkalender@kc-
   }
 
   function updateButtons() {
-    prevBtn.disabled = currentDayIndex === 0;
-    nextBtn.disabled = currentDayIndex === days.length - 1;
+    // No need to disable buttons with infinite loop
+    // But we can still update the UI if needed
+    prevBtn.style.opacity = '1';
+    nextBtn.style.opacity = '1';
   }
 
   prevBtn.addEventListener('click', () => {
-    if (currentDayIndex > 0) {
-      currentDayIndex--;
-      renderCalendar();
-    }
+    currentDayIndex = (currentDayIndex - 1 + days.length) % days.length;
+    updateCalendarPosition();
+    updateButtons();
   });
 
   nextBtn.addEventListener('click', () => {
-    if (currentDayIndex < days.length - 1) {
-      currentDayIndex++;
-      renderCalendar();
-    }
+    currentDayIndex = (currentDayIndex + 1) % days.length;
+    updateCalendarPosition();
+    updateButtons();
   });
 
-  window.addEventListener('resize', renderCalendar);
 
-  // Optional: Swipe support
+  // Enhanced swipe support with infinite loop
   let touchStartX = 0;
-  calendar.addEventListener('touchstart', e => {
-    touchStartX = e.touches[0].clientX;
-  });
-  calendar.addEventListener('touchend', e => {
-    let touchEndX = e.changedTouches[0].clientX;
-    let diff = touchEndX - touchStartX;
-    if (diff > 50 && currentDayIndex > 0 && window.innerWidth < 700) {
-      currentDayIndex--;
-      renderCalendar();
-    } else if (diff < -50 && currentDayIndex < days.length - 1 && window.innerWidth < 700) {
-      currentDayIndex++;
-      renderCalendar();
+  let isDragging = false;
+  let startPos = 0;
+  let currentTranslate = 0;
+  let prevTranslate = 0;
+
+  calendar.addEventListener('mousedown', dragStart);
+  calendar.addEventListener('touchstart', dragStart);
+  calendar.addEventListener('mouseup', dragEnd);
+  calendar.addEventListener('touchend', dragEnd);
+  calendar.addEventListener('mousemove', drag);
+  calendar.addEventListener('touchmove', drag, { passive: false });
+
+  function dragStart(e) {
+    if (window.innerWidth >= 700) return;
+
+    isDragging = true;
+    startPos = e.clientX || e.touches[0].clientX;
+    prevTranslate = currentTranslate;
+
+    const container = document.querySelector('.calendar-container');
+    container.style.transition = 'none';
+
+    e.preventDefault();
+  }
+
+  function drag(e) {
+    if (!isDragging || window.innerWidth >= 700) return;
+
+    const currentPosition = e.clientX || e.touches[0].clientX;
+    const diff = currentPosition - startPos;
+    const container = document.querySelector('.calendar-container');
+
+    // Allow continuous dragging in both directions
+    currentTranslate = prevTranslate + diff;
+    container.style.transition = 'none';
+    container.style.transform = `translateX(${currentTranslate}px)`;
+
+    e.preventDefault();
+  }
+
+  function dragEnd() {
+    if (window.innerWidth >= 700) return;
+
+    isDragging = false;
+    const container = document.querySelector('.calendar-container');
+    if (!container) return;
+
+    container.style.transition = 'transform 0.3s ease';
+
+    const dayWidth = container.parentElement.offsetWidth;
+    const threshold = dayWidth * 0.15; // 15% of day width as threshold
+
+    // Calculate the target day based on drag distance
+    const dragDistance = Math.abs(currentTranslate - prevTranslate);
+    const shouldSwipe = dragDistance > threshold;
+
+    if (shouldSwipe) {
+      if (currentTranslate < prevTranslate) {
+        // Swipe left - next day with infinite loop
+        currentDayIndex = (currentDayIndex + 1) % days.length;
+      } else {
+        // Swipe right - previous day with infinite loop
+        currentDayIndex = (currentDayIndex - 1 + days.length) % days.length;
+      }
     }
+
+    // Snap to the target day
+    updateCalendarPosition();
+  }
+
+  // Handle window resize
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      updateCalendarPosition();
+      updateButtons();
+    }, 250);
   });
 
   renderCalendar();
@@ -247,4 +373,3 @@ Ihr habt Ergänzungen? Dann meldet euch gerne <a href="mailto:kickerkalender@kc-
 
 </body>
 </html>
-
