@@ -78,23 +78,15 @@
     #calendar {
       display: flex;
       flex-direction: column;
-      overflow-y: auto;
-      scroll-snap-type: y mandatory;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
+      gap: 2rem;
       margin: 2rem 0;
-      padding-right: 1rem;
-      gap: 1.5rem;
-      max-height: 80vh;
-      scroll-padding: 1.5rem 0;
     }
 
     @media (min-width: 768px) {
       #calendar {
         display: grid;
         grid-template-columns: 1fr;
-        overflow-y: auto;
-        scroll-snap-type: y mandatory;
+        gap: 2rem;
       }
     }
 
@@ -104,9 +96,6 @@
       overflow: hidden;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
-      flex: 0 0 auto;
-      scroll-snap-align: start;
-      margin: 0 0 1.5rem 0;
       width: 100%;
     }
 
@@ -138,7 +127,7 @@
     .entry {
       background: var(--light);
       border-radius: 8px;
-      padding: 1rem;
+      padding: 1.25rem;
       margin-bottom: 1rem;
       border-left: 4px solid var(--primary);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -146,7 +135,7 @@
 
     .entry:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px -1px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.1);
     }
 
     .entry.tournament {
@@ -192,10 +181,11 @@
 
     .entry-meta {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      gap: 0.75rem;
+      gap: 1rem;
       margin-top: 0.75rem;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: var(--gray);
     }
 
