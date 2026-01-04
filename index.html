@@ -24,6 +24,10 @@
       padding: 0;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       line-height: 1.6;
@@ -63,18 +67,6 @@
       line-height: 1.6;
     }
 
-    .contact-link {
-      color: white;
-      text-decoration: none;
-      font-weight: 500;
-      border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-      transition: all 0.2s ease;
-    }
-
-    .contact-link:hover {
-      border-bottom-color: white;
-    }
-
     #calendar {
       display: flex;
       flex-direction: column;
@@ -97,6 +89,7 @@
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       width: 100%;
+      scroll-margin-top: 24px;
     }
 
     @media (min-width: 768px) {
@@ -309,9 +302,9 @@
   </header>
 
   <div class="container">
-    <button id="todayBtn" class="today-button" aria-label="Zum heutigen Tag springen">
+    <a id="todayBtn" class="today-button" aria-label="Zum heutigen Tag springen">
       <i class="fas fa-calendar-day"></i> Heute
-    </button>
+    </a>
     <div id="calendar"></div>
   </div>
 
@@ -348,46 +341,21 @@
     ],
   };
 
-  let currentDayIndex = 0;
-
   const calendar = document.getElementById('calendar');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
 
   function renderCalendar() {
     calendar.innerHTML = '';
 
     // Always render all days in a grid
-    days.forEach((day, index) => {
+    days.forEach((day) => {
       calendar.appendChild(createDayBox(day, entries[day] || []));
     });
-
-    // Wait for the DOM to update
-    setTimeout(() => {
-      updateButtons();
-    }, 0);
-  }
-
-  function updateCalendarPosition() {
-    if (window.innerWidth < 700) {
-      // On mobile, show one day at a time with infinite loop
-      const dayWidth = calendar.offsetWidth;
-      const totalDays = days.length;
-
-      // Handle infinite loop by duplicating days at the beginning and end
-      if (currentDayIndex < 0) currentDayIndex = totalDays - 1;
-      if (currentDayIndex >= totalDays) currentDayIndex = 0;
-
-      calendar.scrollTo({
-        left: dayWidth * currentDayIndex,
-        behavior: 'smooth'
-      });
-    }
   }
 
   function createDayBox(day, items) {
     const dayBox = document.createElement('div');
     dayBox.className = 'day';
+    dayBox.id = day; // for fragment links
 
     const dayHeader = document.createElement('div');
     dayHeader.className = 'day-header';
@@ -437,118 +405,17 @@
     return dayBox;
   }
 
-  function updateButtons() {
-    // No need to disable buttons with infinite loop
-    // But we can still update the UI if needed
-    prevBtn.style.opacity = '1';
-    nextBtn.style.opacity = '1';
-  }
-
-  // Scroll to today's day
-  function scrollToToday() {
-    const today = new Date().getDay();
-    // Convert Sunday (0) to 6, Monday (1) to 0, etc.
-    const dayIndex = today === 0 ? 6 : today - 1;
-    const dayElements = document.querySelectorAll('.day');
-
-    if (dayElements[dayIndex]) {
-      // Add a small offset to account for the header
-      const headerHeight = document.querySelector('header').offsetHeight;
-      const yOffset = -headerHeight - 20;
-      const y = dayElements[dayIndex].getBoundingClientRect().top + window.pageYOffset + yOffset;
-
-      window.scrollTo({ top: y, behavior: 'smooth' });
-
-      // Add highlight effect
-      dayElements[dayIndex].classList.add('highlight-today');
-      setTimeout(() => {
-        dayElements[dayIndex].classList.remove('highlight-today');
-      }, 2000);
-    }
-  }
-
   // Initialize the calendar
   document.addEventListener('DOMContentLoaded', () => {
     renderCalendar();
 
-    // Add click handler for today button
     const todayBtn = document.getElementById('todayBtn');
     if (todayBtn) {
-      todayBtn.addEventListener('click', scrollToToday);
-
-      // Show the button after a short delay to ensure it's visible on mobile
-      setTimeout(() => {
-        todayBtn.style.opacity = '1';
-        todayBtn.style.visibility = 'visible';
-      }, 100);
+      const today = new Date().getDay();
+      // Convert Sunday (0) to 6, Monday (1) to 0, etc.
+      const dayIndex = today === 0 ? 6 : today - 1;
+      todayBtn.href = `#${(days[dayIndex])}`
     }
-
-    // Setup touch events for swiping
-    const calendarEl = document.getElementById('calendar');
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    calendarEl.addEventListener('touchstart', e => {
-      touchStartX = e.changedTouches[0].screenX;
-    }, false);
-
-    calendarEl.addEventListener('touchend', e => {
-      touchEndX = e.changedTouches[0].screenX;
-      handleSwipe();
-    }, false);
-
-    function handleSwipe() {
-      const swipeThreshold = 50;
-      const swipeLength = touchStartX - touchEndX;
-
-      if (Math.abs(swipeLength) > swipeThreshold) {
-        if (swipeLength > 0) {
-          // Swipe left - go to next day
-          currentDayIndex = (currentDayIndex + 1) % days.length;
-        } else {
-          // Swipe right - go to previous day
-          currentDayIndex = (currentDayIndex - 1 + days.length) % days.length;
-        }
-
-        // Scroll to the selected day
-        const dayElements = document.querySelectorAll('.day');
-        if (dayElements[currentDayIndex]) {
-          dayElements[currentDayIndex].scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest',
-            inline: 'center'
-          });
-        }
-      }
-    }
-
-    // Update current day based on scroll position
-    calendarEl.addEventListener('scroll', () => {
-      const dayElements = document.querySelectorAll('.day');
-      const container = calendarEl.getBoundingClientRect();
-
-      dayElements.forEach((day, index) => {
-        const dayRect = day.getBoundingClientRect();
-        // Check if day is in the center of the viewport
-        if (dayRect.left >= container.left &&
-            dayRect.right <= container.right) {
-          currentDayIndex = index;
-        }
-      });
-    });
-  });
-
-  // Add smooth scroll behavior for anchor links
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        target.scrollIntoView({
-          behavior: 'smooth'
-        });
-      }
-    });
   });
 
   // Add animation on page load
