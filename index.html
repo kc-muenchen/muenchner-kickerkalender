@@ -348,41 +348,15 @@
     ],
   };
 
-  let currentDayIndex = 0;
-
   const calendar = document.getElementById('calendar');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
 
   function renderCalendar() {
     calendar.innerHTML = '';
 
     // Always render all days in a grid
-    days.forEach((day, index) => {
+    days.forEach((day) => {
       calendar.appendChild(createDayBox(day, entries[day] || []));
     });
-
-    // Wait for the DOM to update
-    setTimeout(() => {
-      updateButtons();
-    }, 0);
-  }
-
-  function updateCalendarPosition() {
-    if (window.innerWidth < 700) {
-      // On mobile, show one day at a time with infinite loop
-      const dayWidth = calendar.offsetWidth;
-      const totalDays = days.length;
-
-      // Handle infinite loop by duplicating days at the beginning and end
-      if (currentDayIndex < 0) currentDayIndex = totalDays - 1;
-      if (currentDayIndex >= totalDays) currentDayIndex = 0;
-
-      calendar.scrollTo({
-        left: dayWidth * currentDayIndex,
-        behavior: 'smooth'
-      });
-    }
   }
 
   function createDayBox(day, items) {
@@ -437,13 +411,6 @@
     return dayBox;
   }
 
-  function updateButtons() {
-    // No need to disable buttons with infinite loop
-    // But we can still update the UI if needed
-    prevBtn.style.opacity = '1';
-    nextBtn.style.opacity = '1';
-  }
-
   // Scroll to today's day
   function scrollToToday() {
     const today = new Date().getDay();
@@ -475,67 +442,7 @@
     const todayBtn = document.getElementById('todayBtn');
     if (todayBtn) {
       todayBtn.addEventListener('click', scrollToToday);
-
-      // Show the button after a short delay to ensure it's visible on mobile
-      setTimeout(() => {
-        todayBtn.style.opacity = '1';
-        todayBtn.style.visibility = 'visible';
-      }, 100);
     }
-
-    // Setup touch events for swiping
-    const calendarEl = document.getElementById('calendar');
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    calendarEl.addEventListener('touchstart', e => {
-      touchStartX = e.changedTouches[0].screenX;
-    }, false);
-
-    calendarEl.addEventListener('touchend', e => {
-      touchEndX = e.changedTouches[0].screenX;
-      handleSwipe();
-    }, false);
-
-    function handleSwipe() {
-      const swipeThreshold = 50;
-      const swipeLength = touchStartX - touchEndX;
-
-      if (Math.abs(swipeLength) > swipeThreshold) {
-        if (swipeLength > 0) {
-          // Swipe left - go to next day
-          currentDayIndex = (currentDayIndex + 1) % days.length;
-        } else {
-          // Swipe right - go to previous day
-          currentDayIndex = (currentDayIndex - 1 + days.length) % days.length;
-        }
-
-        // Scroll to the selected day
-        const dayElements = document.querySelectorAll('.day');
-        if (dayElements[currentDayIndex]) {
-          dayElements[currentDayIndex].scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest',
-            inline: 'center'
-          });
-        }
-      }
-    }
-
-    // Update current day based on scroll position
-    calendarEl.addEventListener('scroll', () => {
-      const dayElements = document.querySelectorAll('.day');
-      const container = calendarEl.getBoundingClientRect();
-
-      dayElements.forEach((day, index) => {
-        const dayRect = day.getBoundingClientRect();
-        // Check if day is in the center of the viewport
-        if (dayRect.left >= container.left &&
-            dayRect.right <= container.right) {
-          currentDayIndex = index;
-        }
-      });
-    });
   });
 
   // Add smooth scroll behavior for anchor links
