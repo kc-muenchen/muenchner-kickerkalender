@@ -224,22 +224,25 @@
 
     .today-button {
       position: fixed;
-      bottom: 2rem;
-      right: 2rem;
+      bottom: 1.5rem;
+      right: 1rem;
       background: var(--primary);
       color: white;
-      border: none;
+      border: 2px solid white;
       border-radius: 50px;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
+      padding: 0.9rem 1.5rem;
+      font-size: 1.1rem;
       font-weight: 600;
       display: flex;
       align-items: center;
       gap: 0.5rem;
       cursor: pointer;
-      box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       transition: all 0.2s ease;
-      z-index: 100;
+      z-index: 1000;
+      -webkit-tap-highlight-color: transparent;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
 
     .today-button:hover {
@@ -254,10 +257,12 @@
 
     @media (max-width: 768px) {
       .today-button {
-        bottom: 1rem;
+        bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
         right: 1rem;
-        padding: 0.6rem 1.2rem;
-        font-size: 0.9rem;
+        padding: 1rem 1.8rem;
+        font-size: 1rem;
+        min-width: 5.5rem;
+        justify-content: center;
       }
     }
 
@@ -470,6 +475,12 @@
     const todayBtn = document.getElementById('todayBtn');
     if (todayBtn) {
       todayBtn.addEventListener('click', scrollToToday);
+
+      // Show the button after a short delay to ensure it's visible on mobile
+      setTimeout(() => {
+        todayBtn.style.opacity = '1';
+        todayBtn.style.visibility = 'visible';
+      }, 100);
     }
 
     // Setup touch events for swiping
