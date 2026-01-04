@@ -77,22 +77,24 @@
 
     #calendar {
       display: flex;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
+      flex-direction: column;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
       margin: 2rem 0;
-      padding-bottom: 1rem;
+      padding-right: 1rem;
       gap: 1.5rem;
-      scroll-padding: 0 1.5rem;
+      max-height: 80vh;
+      scroll-padding: 1.5rem 0;
     }
 
     @media (min-width: 768px) {
       #calendar {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        overflow-x: visible;
-        scroll-snap-type: none;
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+        scroll-snap-type: y mandatory;
       }
     }
 
@@ -102,9 +104,10 @@
       overflow: hidden;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
-      flex: 0 0 calc(100% - 3rem);
+      flex: 0 0 auto;
       scroll-snap-align: start;
-      margin: 0 0.5rem;
+      margin: 0 0 1.5rem 0;
+      width: 100%;
     }
 
     @media (min-width: 768px) {
@@ -142,8 +145,8 @@
     }
 
     .entry:hover {
-      transform: translateX(4px);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px -1px rgba(0, 0, 0, 0.15);
     }
 
     .entry.tournament {
@@ -270,29 +273,29 @@
   const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
   const entries = {
     Montag: [
-      { title: 'Monster-DYP', time: '8:15 PM', location: '<a href="https://maps.app.goo.gl/sUK2SaNeQZq8CRUj9">Happy Billard, Martinsried</a>', link: 'https://www.tischfussballvereinigung.de/', whatsapp: 'https://chat.whatsapp.com/JTFKNj7SOGCFgFgKe1qMkj', description: 'Wöchentliches Monster-DYP der Tischfußballvereinigung München e.V.', type: 'tournament' }
+      { title: 'Monster-DYP', time: '20:15', location: '<a href="https://maps.app.goo.gl/sUK2SaNeQZq8CRUj9">Happy Billard, Martinsried</a>', link: 'https://www.tischfussballvereinigung.de/', whatsapp: 'https://chat.whatsapp.com/JTFKNj7SOGCFgFgKe1qMkj', description: 'Wöchentliches Monster-DYP der Tischfußballvereinigung München e.V.', type: 'tournament' }
     ],
     Dienstag: [
-      { title: 'Freies Training', time: '6:30 PM', location: '<a href="https://maps.app.goo.gl/dj5vfbZqDJvzbKNg8">Die Katze, KC München</a>', link: 'https://kc-muenchen.de/', whatsapp: 'https://chat.whatsapp.com/FaSZY5WEKq63ChSRYcvYjM', description: 'Freies Training beim KC München e.V.', type: 'tournament'  },
-      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/tHnYFwcH5km1cfgNA">Südstadt, München</a>', link: 'https://www.suedstadt-schlachthof.de/', description: 'Lockeres Kickern in der Südstadt. Normalerweise ist am Dienstag immer etwas los.', type: 'leisure' }
+      { title: 'Freies Training', time: '18:30', location: '<a href="https://maps.app.goo.gl/dj5vfbZqDJvzbKNg8">Die Katze, KC München</a>', link: 'https://kc-muenchen.de/', whatsapp: 'https://chat.whatsapp.com/FaSZY5WEKq63ChSRYcvYjM', description: 'Freies Training beim KC München e.V.', type: 'tournament'  },
+      { title: 'Kneipenkickern', time: '20:00', location: '<a href="https://maps.app.goo.gl/tHnYFwcH5km1cfgNA">Südstadt, München</a>', link: 'https://www.suedstadt-schlachthof.de/', description: 'Lockeres Kickern in der Südstadt. Normalerweise ist am Dienstag immer etwas los.', type: 'leisure' }
     ],
     Mittwoch: [
-      { title: 'Monster-DYP', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/dj5vfbZqDJvzbKNg8">Die Katze, KC München</a>', link: 'https://kc-muenchen.de/', whatsapp: 'https://chat.whatsapp.com/FaSZY5WEKq63ChSRYcvYjM', description: 'Wöchentliches Monster-DYP des KickerClub München e.V.', type: 'tournament'  }
+      { title: 'Monster-DYP', time: '20:00', location: '<a href="https://maps.app.goo.gl/dj5vfbZqDJvzbKNg8">Die Katze, KC München</a>', link: 'https://kc-muenchen.de/', whatsapp: 'https://chat.whatsapp.com/FaSZY5WEKq63ChSRYcvYjM', description: 'Wöchentliches Monster-DYP des KickerClub München e.V.', type: 'tournament'  }
     ],
     Donnerstag: [
-      { title: 'Monster-DYP (zweiwöchentlich)', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Zweiwöchentliches Monster-DYP in lockerer Kneipenathmosphäre. Findet immer alternierend zum Einzelturnier beim KC München statt.', type: 'tournament'  },
-      { title: 'Kneipenkickern', time: '9:30 PM', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Wenn kein Turnier stattfindet, finden sich hier auch häufig ein paar Spieler:innen', type: 'leisure' }
+      { title: 'Monster-DYP (zweiwöchentlich)', time: '20:00', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Zweiwöchentliches Monster-DYP in lockerer Kneipenathmosphäre. Findet immer alternierend zum Einzelturnier beim KC München statt.', type: 'tournament'  },
+      { title: 'Kneipenkickern', time: '21:30', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Wenn kein Turnier stattfindet, finden sich hier auch häufig ein paar Spieler:innen', type: 'leisure' }
     ],
     Freitag: [
-      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann in der Südstadt nebenan.', type: 'leisure'  },
-      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/tHnYFwcH5km1cfgNA">Südstadt, München</a>', link: 'https://www.suedstadt-schlachthof.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann im Flex nebenan.', type: 'leisure'  },
-      { title: 'Turnier / freies Spiel / Monster DYP', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/H39hEXPVwLge3HRf8">TSG Maisach</a>', link: 'https://www.tsgmaisach.de/', whatsapp: 'https://chat.whatsapp.com/JVXJSnSg0tBHjIJ3E22Gnd?mode=ems_qr_t', description: 'Je nach Zahl der Anwesenden wird hier gespielt, trainiert oder ein Turnier gespielt.', type: 'tournament'  }
+      { title: 'Kneipenkickern', time: '20:00', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann in der Südstadt nebenan.', type: 'leisure'  },
+      { title: 'Kneipenkickern', time: '20:00', location: '<a href="https://maps.app.goo.gl/tHnYFwcH5km1cfgNA">Südstadt, München</a>', link: 'https://www.suedstadt-schlachthof.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann im Flex nebenan.', type: 'leisure'  },
+      { title: 'Turnier / freies Spiel / Monster DYP', time: '20:00', location: '<a href="https://maps.app.goo.gl/H39hEXPVwLge3HRf8">TSG Maisach</a>', link: 'https://www.tsgmaisach.de/', whatsapp: 'https://chat.whatsapp.com/JVXJSnSg0tBHjIJ3E22Gnd?mode=ems_qr_t', description: 'Je nach Zahl der Anwesenden wird hier gespielt, trainiert oder ein Turnier gespielt.', type: 'tournament'  }
     ],
     Samstag: [
-      { title: 'Einzelturnier (zweiwöchentlich)', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/dj5vfbZqDJvzbKNg8">Die Katze, KC München</a>', link: 'https://kc-muenchen.de/', whatsapp:'https://chat.whatsapp.com/FaSZY5WEKq63ChSRYcvYjM', description: 'Zweiwöchentliches Einzelturnier des KickerClub München e.V.. Findet immer alternierend zum Monster-DYP im Flex statt.', type: 'tournament'  },
-      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann in der Südstadt nebenan.', type: 'leisure'  },
-      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/tHnYFwcH5km1cfgNA">Südstadt, München</a>', link: 'https://www.suedstadt-schlachthof.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann im Flex nebenan.', type: 'leisure'  },
-      { title: 'Kneipenkickern', time: '8:00 PM', location: '<a href="https://maps.app.goo.gl/yBRz64Kx1afuXLb48">Substanz, München</a>', link: 'https://substanz-club.com/', description: 'Kickern in lockerer Kneipenatmosphäre.', type: 'leisure'  },
+      { title: 'Einzelturnier (zweiwöchentlich)', time: '20:00', location: '<a href="https://maps.app.goo.gl/dj5vfbZqDJvzbKNg8">Die Katze, KC München</a>', link: 'https://kc-muenchen.de/', whatsapp:'https://chat.whatsapp.com/FaSZY5WEKq63ChSRYcvYjM', description: 'Zweiwöchentliches Einzelturnier des KickerClub München e.V.. Findet immer alternierend zum Monster-DYP im Flex statt.', type: 'tournament'  },
+      { title: 'Kneipenkickern', time: '20:00', location: '<a href="https://maps.app.goo.gl/61L8ZAeVZfMYWnCH9">Flex, München</a>', link: 'https://www.flex-muenchen.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann in der Südstadt nebenan.', type: 'leisure'  },
+      { title: 'Kneipenkickern', time: '20:00', location: '<a href="https://maps.app.goo.gl/tHnYFwcH5km1cfgNA">Südstadt, München</a>', link: 'https://www.suedstadt-schlachthof.de/', description: 'Freitag und Samstag sind normalerweise immer ein paar Leute da. Wenn nicht hier, dann im Flex nebenan.', type: 'leisure'  },
+      { title: 'Kneipenkickern', time: '20:00', location: '<a href="https://maps.app.goo.gl/yBRz64Kx1afuXLb48">Substanz, München</a>', link: 'https://substanz-club.com/', description: 'Kickern in lockerer Kneipenatmosphäre.', type: 'leisure'  },
     ],
     Sonntag: [
       { title: 'Training (unregelmäßig)', time: 'Abends', location: '<a href="https://maps.app.goo.gl/sUK2SaNeQZq8CRUj9">Happy Billard, Martinsried</a>', link: 'https://www.tischfussballvereinigung.de/', whatsapp: 'https://chat.whatsapp.com/JTFKNj7SOGCFgFgKe1qMkj', description: 'Unregelmäßiges Training der Tischfußballvereinigung München e.V.. Bei Interesse am Besten in der WhatsApp-Gruppe nachfragen, ob gerade etwas stattfindet.', type: '' }
@@ -373,7 +376,7 @@
           </h4>
           <p>${item.description}</p>
           <div class="entry-meta">
-            <span title="Uhrzeit"><i class="far fa-clock"></i> ${item.time} Uhr</span>
+            <span title="Uhrzeit"><i class="far fa-clock"></i> ${item.time}</span>
             <span title="Ort"><i class="fas fa-map-marker-alt"></i> ${item.location}</span>
           </div>
           ${whatsappLink}
