@@ -24,6 +24,10 @@
       padding: 0;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       line-height: 1.6;
@@ -85,6 +89,7 @@
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       width: 100%;
+      scroll-margin-top: 24px;
     }
 
     @media (min-width: 768px) {
@@ -297,9 +302,9 @@
   </header>
 
   <div class="container">
-    <button id="todayBtn" class="today-button" aria-label="Zum heutigen Tag springen">
+    <a id="todayBtn" class="today-button" aria-label="Zum heutigen Tag springen">
       <i class="fas fa-calendar-day"></i> Heute
-    </button>
+    </a>
     <div id="calendar"></div>
   </div>
 
@@ -350,6 +355,7 @@
   function createDayBox(day, items) {
     const dayBox = document.createElement('div');
     dayBox.className = 'day';
+    dayBox.id = day; // for fragment links
 
     const dayHeader = document.createElement('div');
     dayHeader.className = 'day-header';
@@ -399,37 +405,16 @@
     return dayBox;
   }
 
-  // Scroll to today's day
-  function scrollToToday() {
-    const today = new Date().getDay();
-    // Convert Sunday (0) to 6, Monday (1) to 0, etc.
-    const dayIndex = today === 0 ? 6 : today - 1;
-    const dayElements = document.querySelectorAll('.day');
-
-    if (dayElements[dayIndex]) {
-      // Add a small offset to account for the header
-      const headerHeight = document.querySelector('header').offsetHeight;
-      const yOffset = -headerHeight - 20;
-      const y = dayElements[dayIndex].getBoundingClientRect().top + window.pageYOffset + yOffset;
-
-      window.scrollTo({ top: y, behavior: 'smooth' });
-
-      // Add highlight effect
-      dayElements[dayIndex].classList.add('highlight-today');
-      setTimeout(() => {
-        dayElements[dayIndex].classList.remove('highlight-today');
-      }, 2000);
-    }
-  }
-
   // Initialize the calendar
   document.addEventListener('DOMContentLoaded', () => {
     renderCalendar();
 
-    // Add click handler for today button
     const todayBtn = document.getElementById('todayBtn');
     if (todayBtn) {
-      todayBtn.addEventListener('click', scrollToToday);
+      const today = new Date().getDay();
+      // Convert Sunday (0) to 6, Monday (1) to 0, etc.
+      const dayIndex = today === 0 ? 6 : today - 1;
+      todayBtn.href = `#${(days[dayIndex])}`
     }
   });
 
